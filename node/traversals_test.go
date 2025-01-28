@@ -53,3 +53,16 @@ func Test_Inorder(t *testing.T) {
 		assert.Equal(t, val, inOrder[idx].GetValue()[0])
 	}
 }
+
+func Test_Postorder(t *testing.T) {
+	tree := getTestTree()
+
+	expected := []string{"d", "e", "b", "f", "g", "c", "a"}
+	postOrder := PostOrder(tree)
+
+	assert.Len(t, postOrder, len(expected))
+
+	for idx, val := range expected {
+		assert.Equal(t, val, postOrder[idx].GetValue()[0])
+	}
+}

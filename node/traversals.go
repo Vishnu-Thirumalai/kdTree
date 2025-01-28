@@ -51,7 +51,7 @@ func InOrder[T cmp.Ordered](head *node[T]) []*node[T] {
 			curr = stk.Peep()
 		}
 
-		// Go up until there's a right branch
+		// Go up, visiting nodes until there's a right branch
 		for curr != nil && curr.right == nil {
 			ret = append(ret, stk.Pop())
 			curr = stk.Peep()
@@ -62,7 +62,7 @@ func InOrder[T cmp.Ordered](head *node[T]) []*node[T] {
 			break
 		}
 
-		// Get current then move right
+		// Visit current then move right
 		ret = append(ret, curr)
 		stk.Pop()
 		stk.Push(curr.right)
@@ -71,46 +71,40 @@ func InOrder[T cmp.Ordered](head *node[T]) []*node[T] {
 	return ret
 }
 
-// type seenCount[T cmp.Ordered] struct {
-// 	n     *node[T]
-// 	count int
-// }
+// Left -> Right -> Curr
+func PostOrder[T cmp.Ordered](head *node[T]) []*node[T] {
+	if head == nil {
+		return []*node[T]{}
+	}
 
-// // Left -> Curr -> Right
-// func InOrder[T cmp.Ordered](head *node[T]) []*node[T] {
-// 	if head == nil {
-// 		return []*node[T]{}
-// 	}
+	var curr *node[T]
+	ret := make([]*node[T], 0, head.TreeDepth()*2+1)
+	stk := NewStack[T](head.TreeDepth())
+	curr = head
 
-// 	var curr *seenCount[T]
-// 	ret := make([]*node[T], 0, head.TreeDepth()*2+1)
-// 	stk := []*seenCount[T]{{n: head}}
-// 	l := 0
+	for stk.Len() > 0 {
 
-// 	for l > -1 {
-// 		curr = stk[l]
-// 		fmt.Println(curr.n, stk)
+		// Go as far left as possible
+		for curr != nil {
+			stk.Push(curr.GetRight())
+			stk.Push(curr)
+			curr = curr.GetLeft()
+		}
 
-// 		switch curr.count {
-// 		case 0:
-// 			if curr.n.left != nil {
-// 				stk = append(stk, &seenCount[T]{n: curr.n.left})
-// 				l += 1
-// 			}
-// 			curr.count += 1
-// 		case 1:
-// 			ret = append(ret, curr.n)
+		curr = stk.Pop() // Has no left
 
-// 			stk = stk[:l]
-// 			l -= 1
+		// If no right child, then visit
+		// If right child:
+		// If right child is on the stack, it hasn't been visited yet: so visit right first and save this node for later
+		// If right child isn't on the stack, it's already been seen so visit
 
-// 			if curr.n.right != nil {
-// 				stk = append(stk, &seenCount[T]{n: curr.n.right})
-// 				l += 1
-// 			}
-// 		}
-
-// 	}
-
-// 	return ret
-// }
+		if curr.GetRight() != nil && curr.GetRight() == stk.Peep() {
+			right := stk.Pop()
+			stk.Push(curr)
+			curr = right
+		} else {
+			ret = append(ret, curr)
+		}
+	}
+	return ret
+}
