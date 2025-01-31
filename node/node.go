@@ -46,6 +46,36 @@ func (n *node[T]) TreeDepth() int {
 	return depth
 }
 
+func (n *node[T]) Compare(other *node[T]) int {
+	return CompareList(n.GetValue(), other.GetValue())
+}
+
+func CompareList[T cmp.Ordered](a []T, b []T) int {
+
+	idx := 0
+
+	// Compare elements
+	for idx < len(a) && idx < len(b) {
+		c := cmp.Compare(a[idx], b[idx])
+		switch c {
+		case 0:
+			idx += 1
+			continue
+		default:
+			return c
+		}
+	}
+
+	// One/Both lists are exhausted, compare lengths
+	if len(a) == len(b) {
+		return 0
+	} else if idx == len(a) {
+		return -1
+	} else {
+		return 1
+	}
+}
+
 func NewTreeFromList[T cmp.Ordered](vals [][]T) *node[T] {
 
 	var makeNode func(idx int) *node[T]

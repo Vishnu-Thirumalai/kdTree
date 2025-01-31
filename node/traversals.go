@@ -95,8 +95,8 @@ func PostOrder[T cmp.Ordered](head *node[T]) []*node[T] {
 
 		// If no right child, then visit
 		// If right child:
-		// If right child is on the stack, it hasn't been visited yet: so visit right first and save this node for later
-		// If right child isn't on the stack, it's already been seen so visit
+		// - If right child is on the stack, it hasn't been visited yet: so visit right first and save this node for later
+		// - If right child isn't on the stack, right subtree has been seen so visit
 
 		if curr.GetRight() != nil && curr.GetRight() == stk.Peep() {
 			right := stk.Pop()
